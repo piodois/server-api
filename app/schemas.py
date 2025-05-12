@@ -1,6 +1,40 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import Optional, List
 from datetime import datetime
+
+
+# Schemas para Usuario
+class UsuarioBase(BaseModel):
+    email: EmailStr
+    username: str
+    is_active: bool = True
+    is_admin: bool = False
+
+
+class UsuarioCreate(UsuarioBase):
+    password: str
+
+
+class Usuario(UsuarioBase):
+    id: int
+    fecha_creacion: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class UsuarioInDB(Usuario):
+    hashed_password: str
+
+
+# Schemas para autenticación
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
 
 
 # Schemas para Categoría
@@ -16,7 +50,7 @@ class Categoria(CategoriaBase):
     id: int
 
     class Config:
-        from_attributes = True  # Reemplaza orm_mode = True
+        from_attributes = True
 
 
 # Schemas para Producto
@@ -46,7 +80,7 @@ class Producto(ProductoBase):
     categoria: Categoria
 
     class Config:
-        from_attributes = True  # Reemplaza orm_mode = True
+        from_attributes = True
 
 
 # Schema para filtros dinámicos
